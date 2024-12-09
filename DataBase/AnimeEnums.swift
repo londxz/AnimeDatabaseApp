@@ -12,3 +12,10 @@ enum AnimeType: String {
     case ona = "ONA"
     case other = "Other"
 }
+
+enum AnimeStatus: String {
+    case announced = "Announced"
+    case airing = "Airing"
+    case finished = "Finished"
+    case discontinued = "Discontinued"
+}

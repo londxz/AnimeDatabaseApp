@@ -110,13 +110,13 @@ func addStudio(connection: Connection, name: String, description: String) {
     }
 }
 
-func addAnime(connection: Connection, name: String, studio: String, synopsis: String, premierDate: String, genre: String, type: AnimeType, imageUrl: String, finalDate: String, numEpisodes: Int = 0, score: Double = 0.0) {
+func addAnime(connection: Connection, name: String, studio: String, synopsis: String, premierDate: String, genre: String, type: AnimeType, status: AnimeStatus, imageUrl: String, finalDate: String, numEpisodes: Int = 0, score: Double = 0.0) {
     
     do {
 
         let query = """
         CALL add_anime(
-            $1, $2, $3, $4, $5, $6::anime_type, $7, $8, $9, $10
+            $1, $2, $3, $4, $5, $6::anime_type, $7::anime_status, $8, $9, $10, $11
         )
         """
 
@@ -130,6 +130,7 @@ func addAnime(connection: Connection, name: String, studio: String, synopsis: St
             premierDate,
             genre,
             type.rawValue,
+            status.rawValue,
             imageUrl,
             finalDate,
             numEpisodes,
@@ -310,6 +311,256 @@ func searchAnimeByEnglishName(connection: Connection, englishName: String) {
     }
 }
 
+func getGenreData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC", searchTerm: String? = nil) {
+    
+    do {
+        // Подготовка SQL-запроса к функции
+        let query = """
+        SELECT * FROM get_genre_data($1, $2, $3, $4, $5)
+        """
+        
+        var parameters: [PostgresValueConvertible] = [
+            numRows,
+            offset,
+            sortCol,
+            sortDirection
+        ]
+        
+        if let term = searchTerm {
+            parameters.append("%\(term)%")
+        } else {
+            parameters.append(nil as String?)
+        }
+        
+        let statement = try connection.prepareStatement(text: query)
+        defer { statement.close() }
+        
+        // Выполнение запроса
+        let cursor = try statement.execute(parameterValues: parameters)
+        defer { cursor.close() }
+        
+        // Обработка результата
+        for row in cursor {
+            let columns = try row.get().columns
+            guard columns.count == 2 else {
+                print("Unexpected number of columns in result")
+                continue
+            }
+            
+            if let name = try? columns[0].postgresValue.string(),
+               let description = try? columns[1].postgresValue.string() {
+                print("Name: \(name), Description: \(description)")
+            }
+        }
+        
+        print("Процедура успешно выполнена.")
+    } catch {
+        print("Ошибка при вызове процедуры getGenreData: \(error)")
+    }
+}
+
+func getStudioData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC", searchTerm: String? = nil) {
+    
+    do {
+        // Подготовка SQL-запроса к функции
+        let query = """
+        SELECT * FROM get_studio_data($1, $2, $3, $4, $5)
+        """
+        
+        var parameters: [PostgresValueConvertible] = [
+            numRows,
+            offset,
+            sortCol,
+            sortDirection
+        ]
+        
+        if let term = searchTerm {
+            parameters.append("%\(term)%")
+        } else {
+            parameters.append(nil as String?)
+        }
+        
+        let statement = try connection.prepareStatement(text: query)
+        defer { statement.close() }
+        
+        // Выполнение запроса
+        let cursor = try statement.execute(parameterValues: parameters)
+        defer { cursor.close() }
+        
+        // Обработка результата
+        for row in cursor {
+            let columns = try row.get().columns
+            guard columns.count == 2 else {
+                print("Unexpected number of columns in result")
+                continue
+            }
+            
+            if let name = try? columns[0].postgresValue.string(),
+               let description = try? columns[1].postgresValue.string() {
+                print("Name: \(name), Description: \(description)")
+            }
+        }
+        
+        print("Процедура успешно выполнена.")
+    } catch {
+        print("Ошибка при вызове процедуры getStudioData: \(error)")
+    }
+}
+
+func getAnimeData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC") {
+    
+    do {
+        // Подготовка SQL-запроса к функции
+        let query = """
+        SELECT * FROM get_anime_data($1, $2, $3, $4)
+        """
+        
+        let parameters: [PostgresValueConvertible] = [
+            numRows,
+            offset,
+            sortCol,
+            sortDirection
+        ]
+        
+        let statement = try connection.prepareStatement(text: query)
+        defer { statement.close() }
+        
+        // Выполнение запроса
+        let cursor = try statement.execute(parameterValues: parameters)
+        defer { cursor.close() }
+        
+        // Обработка результата
+        for row in cursor {
+            let columns = try row.get().columns
+            guard columns.count == 13 else {
+                print("Unexpected number of columns in result")
+                continue
+            }
+            
+            if let id = try? columns[0].postgresValue.int(),
+               let name = try? columns[1].postgresValue.string(),
+               let studio = try? columns[2].postgresValue.string(),
+               let synopsis = try? columns[3].postgresValue.string(),
+               let image = try? columns[4].postgresValue.string(),
+               let premierDate = try? columns[5].postgresValue.date(),
+               let finalDate = try? columns[6].postgresValue.date(),
+               let numEpisodes = try? columns[7].postgresValue.int(),
+               let score = try? columns[8].postgresValue.double(),
+               let genre = try? columns[9].postgresValue.string(),
+               let type = try? columns[10].postgresValue.string(),
+               let status = try? columns[11].postgresValue.string(),
+               let updatedAt = try? columns[12].postgresValue.timestamp() {
+            
+                print("\(id),\(name),\(studio),\(synopsis),\(image),\(premierDate),\(finalDate),\(numEpisodes),\(score),\(genre),\(type),\(status), \(updatedAt)")
+            }
+
+        }
+        
+        print("Процедура успешно выполнена.")
+    } catch {
+        print("Ошибка при вызове процедуры getAnimeData: \(error)")
+    }
+}
+
+func getAnimeNameLocaleData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "romaji_name", sortDirection: String = "ASC", searchTerm: String? = nil) {
+    
+    do {
+        // Подготовка SQL-запроса к функции
+        let query = """
+        SELECT * FROM get_anime_name_locale_data($1, $2, $3, $4, $5)
+        """
+        
+        var parameters: [PostgresValueConvertible] = [
+            numRows,
+            offset,
+            sortCol,
+            sortDirection
+        ]
+        
+        if let term = searchTerm {
+            parameters.append("%\(term)%")
+        } else {
+            parameters.append(nil as String?)
+        }
+        
+        let statement = try connection.prepareStatement(text: query)
+        defer { statement.close() }
+        
+        // Выполнение запроса
+        let cursor = try statement.execute(parameterValues: parameters)
+        defer { cursor.close() }
+        
+        // Обработка результата
+        for row in cursor {
+            let columns = try row.get().columns
+            guard columns.count == 3 else {
+                print("Unexpected number of columns in result")
+                continue
+            }
+            
+            if let animeId = try? columns[0].postgresValue.int(),
+               let japanName = try? columns[1].postgresValue.string(),
+               let romajiName = try? columns[2].postgresValue.string() {
+                print("\(animeId),\(japanName),\(romajiName)")
+            }
+        }
+        
+        print("Процедура успешно выполнена.")
+    } catch {
+        print("Ошибка при вызове процедуры getAnimeNameLocaleData: \(error)")
+    }
+}
+
+func getCharacterData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC", searchTerm: String? = nil) {
+    
+    do {
+        // Подготовка SQL-запроса к функции
+        let query = """
+        SELECT * FROM get_character_data($1, $2, $3, $4, $5)
+        """
+        
+        var parameters: [PostgresValueConvertible] = [
+            numRows,
+            offset,
+            sortCol,
+            sortDirection
+        ]
+        
+        if let term = searchTerm {
+            parameters.append("%\(term)%")
+        } else {
+            parameters.append(nil as String?)
+        }
+        
+        let statement = try connection.prepareStatement(text: query)
+        defer { statement.close() }
+        
+        // Выполнение запроса
+        let cursor = try statement.execute(parameterValues: parameters)
+        defer { cursor.close() }
+        
+        // Обработка результата
+        for row in cursor {
+            let columns = try row.get().columns
+            guard columns.count == 4 else {
+                print("Unexpected number of columns in result")
+                continue
+            }
+            
+            if let id = try? columns[0].postgresValue.int(),
+               let name = try? columns[1].postgresValue.string(),
+               let animeId = try? columns[2].postgresValue.int(),
+               let description = try? columns[3].postgresValue.string() {
+                print("\(id),\(name),\(animeId),\(description)")
+            }
+        }
+        
+        print("Процедура успешно выполнена.")
+    } catch {
+        print("Ошибка при вызове процедуры getCharacterData: \(error)")
+    }
+}
+
 //MARK: - delete data
 
 func clearTable(connection: Connection, name: String) {
@@ -406,6 +657,7 @@ func callTestFuncs() {
              premierDate: "2013-04-07",
              genre: "Action",
              type: .tv,
+             status: .finished,
              imageUrl: "http://example.com/aot.jpg",
              finalDate: "2013-08-07",
              numEpisodes: 25,

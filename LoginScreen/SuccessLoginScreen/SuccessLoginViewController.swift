@@ -12,6 +12,7 @@ class SuccessLoginViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .systemGray5
         setBannerImage()
+        setWelcomeLabel()
         
     }
     
@@ -28,6 +29,14 @@ class SuccessLoginViewController: UIViewController {
         return image
     }()
     
+    lazy var welcomeLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        lbl.font = UIFont(name: "Verdana-Bold", size: 23)
+        
+        return lbl
+    }()
+    
     private func setBannerImage() {
         view.addSubview(successImage)
         successImage.image = .successLogin2
@@ -37,6 +46,15 @@ class SuccessLoginViewController: UIViewController {
             successImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             successImage.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
+    }
+    
+    private func setWelcomeLabel() {
+        view.addSubview(welcomeLabel)
+        welcomeLabel.text = "Welcome, \(UserCredentials.login)!"
         
+        NSLayoutConstraint.activate([
+            welcomeLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100),
+            welcomeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
     }
 }

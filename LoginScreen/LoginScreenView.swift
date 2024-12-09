@@ -62,8 +62,9 @@ class LoginScreenView {
             let text = UILabel()
             text.translatesAutoresizingMaskIntoConstraints = false
             text.text = placeholder
-            text.font = .systemFont(ofSize: 16, weight: .regular)
+            //text.font = .systemFont(ofSize: 16, weight: .regular)
             text.textColor = .black
+            text.font = UIFont(name: "Verdana-Bold", size: 15)
             
             let view = UIView()
             view.translatesAutoresizingMaskIntoConstraints = false
