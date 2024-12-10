@@ -28,30 +28,9 @@ class LoginScreenController: UIViewController {
 
         guard let connection = getConnectionToDb() else { return }
         defer { connection.close() }
-        for family: String in UIFont.familyNames {
-            print(family)
-            for names: String in UIFont.fontNames(forFamilyName: family) {
-                print("== \(names)")
-             }
-        }
 
-        //getAllTablesData(connection: connection)
-        //anyTextQuery(connection: connection, query: "select * from anime;")
-        //addStudio(connection: connection, name: "studio add", description: "1 desc")
-        //addAnime(connection: connection, name: "2Attack on Titan", studio: "Wit Studio", synopsis: "Humans fight titans", premierDate: "2013-04-07", genre: "Action", type: AnimeType.tv, status: .finished, imageUrl: "http://example.com/aot.jpg", finalDate: "2013-08-07", numEpisodes: 25, score: 10)
-        //addAnimeNameLocale(connection: connection, id: 2, japaneseName: "2進撃の巨人", romajiName: "2Shingeki no Kyojin")
-        //addCharacter(connection: connection, name: "2Test_Char_Name", id: 2, description: "2some_desc")
-        //updateByPrimaryKey(connection: connection, tableName: "anime", primaryKeyColumn: "id", primaryKeyValue: "2", updates: ["name": "ATAKA", "score": "10"])
-        //searchAnimeByEnglishName(connection: connection, englishName: "ataka")
-        //deleteByPk(connection: connection, name: "anime", pkColumn: "id", pkValue: "1")
-        //deleteCharacterByDescription(connection: connection, description: "some_desc")
-        //clearAllTables(connection: connection)
-        
-        //getGenreData(connection: connection, numRows: 3)
-        //getStudioData(connection: connection, numRows: 3)
-        //getAnimeData(connection: connection, numRows: 3)
-        //getAnimeNameLocaleData(connection: connection, numRows: 3)
-        getCharacterData(connection: connection, numRows: 3)
+        guard let res = searchAnimeByEnglishName(connection: connection, englishName: "titan") else { return }
+        print("RESULT:\n\(res)")
         
         setBannerImage()
         setContentView()

@@ -49,6 +49,7 @@ class SuccessLoginViewController: UIViewController {
     }
     
     private func setWelcomeLabel() {
+        
         view.addSubview(welcomeLabel)
         welcomeLabel.text = "Welcome, \(UserCredentials.login)!"
         
