@@ -11,15 +11,25 @@ class DataBaseAnimeController: UIViewController {
     
     private let build = DatabaseAnimeView.shared
     
+    //viewModel
+    var animeViewModel = AnimeViewModel()
+    
     var segmentControl = CustomSegmentControl()
     var tableView = UITableView()
+    var cellDataSource: [AnimeCellViewModel] = []
     
     override func viewDidLoad() {
         view.backgroundColor = .systemGray5
         
         setSegmentControl()
-        configTableView()
         setTableView()
+        
+        bindViewModel()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        animeViewModel.getData()
     }
     
     private func setSegmentControl() {
@@ -45,5 +55,22 @@ class DataBaseAnimeController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+        
+        configTableView()
+        
+    }
+    
+    private func bindViewModel() {
+        
+        animeViewModel.cellDataSource.bind { [weak self] anime in
+            guard let self = self, let anime = anime else {
+                return
+            }
+            DispatchQueue.main.async {
+                self.cellDataSource = anime
+                self.reloadTableView()
+            }
+
+        }
     }
 }

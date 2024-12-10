@@ -29,8 +29,29 @@ class LoginScreenController: UIViewController {
         guard let connection = getConnectionToDb() else { return }
         defer { connection.close() }
 
-        guard let res = searchAnimeByEnglishName(connection: connection, englishName: "titan") else { return }
-        print("RESULT:\n\(res)")
+        guard let res = getAnimeData(connection: connection, numRows: 100) else { return }
+        //print("RESULT:\n\(res)")
+        let animka = res[0]
+        //let cellM = AnimeCellViewModel(anime: animka)
+        //print(cellM)
+        
+        let testAnime = AnimeModel(
+            id: 1,
+            name: "Test Anime",
+            studio: "Test Studio",
+            synopsis: "Test Synopsis",
+            image_url: "http://www.world-art.ru/animation/img/12000/11300/1.jpg",
+            premiere_date: "2024-01-01",
+            finale_date: "2024-12-31",
+            num_episodes: 12,
+            score: 8.5,
+            genre: "Action",
+            type: "TV",
+            status: "Completed",
+            updated_at: "2024-12-10"
+        )
+        let testViewModel = AnimeCellViewModel(anime: testAnime)
+        print(testViewModel)
         
         setBannerImage()
         setContentView()

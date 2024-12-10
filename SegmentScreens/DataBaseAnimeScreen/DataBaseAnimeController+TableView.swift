@@ -18,23 +18,6 @@ extension DataBaseAnimeController: UITableViewDelegate, UITableViewDataSource {
         self.registerCells()
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: AnimeCell.identifier, for: indexPath) as? AnimeCell else {
-            return UITableViewCell()
-        }
-        
-        return cell
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 10
-    }
-    
-    
     func registerCells() {
         tableView.register(AnimeCell.self, forCellReuseIdentifier: AnimeCell.identifier)
     }
@@ -44,5 +27,40 @@ extension DataBaseAnimeController: UITableViewDelegate, UITableViewDataSource {
             self.tableView.reloadData()
         }
     }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return animeViewModel.numberOfRows(in: section)
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return animeViewModel.numberOfSections()
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: AnimeCell.identifier, for: indexPath) as? AnimeCell else {
+            return UITableViewCell()
+        }
+        
+        /* function getData is nested with sql func getAnimeData => too much indexes
+        that's why we need to guard
+        */
+
+        
+        guard indexPath.row < self.cellDataSource.count else {
+            return cell
+        }
+
+
+        let cellViewModel = cellDataSource[indexPath.row]
+        cell.setupCell(viewModel: cellViewModel)
+        return cell
+
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 150
+    }
+    
     
 }

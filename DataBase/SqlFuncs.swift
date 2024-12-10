@@ -479,10 +479,11 @@ func getStudioData(connection: Connection, numRows: Int, offset: Int = 0, sortCo
     return nil
 }
 
-func getAnimeData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC") -> [String: [Any]]? {
+func getAnimeData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC") -> [AnimeModel]? {
     
     do {
-        var result = [String: [Any]]()
+        //var result = [String: [Any]]()
+        var result = [AnimeModel]()
         
         let query = """
         SELECT * FROM get_anime_data($1, $2, $3, $4)
@@ -537,7 +538,8 @@ func getAnimeData(connection: Connection, numRows: Int, offset: Int = 0, sortCol
                     status: status,
                     updated_at: updatedAt
                 )
-                result["anime", default: []].append(anime)
+                //result["anime", default: []].append(anime)
+                result.append(anime)
             } else {
                 print("getAnimeData: Failed to parse row data")
             }
