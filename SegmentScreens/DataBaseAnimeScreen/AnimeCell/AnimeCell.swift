@@ -27,14 +27,12 @@ class AnimeCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setCellItems()
-        backView.addBorder(color: .label, width: 1)
         roundEdges()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setCellItems()
-        backView.addBorder(color: .label, width: 1)
         roundEdges()
     }
 

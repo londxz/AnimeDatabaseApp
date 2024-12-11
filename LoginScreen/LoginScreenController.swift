@@ -31,7 +31,7 @@ class LoginScreenController: UIViewController {
 
         guard let res = getAnimeData(connection: connection, numRows: 100) else { return }
         //print("RESULT:\n\(res)")
-        let animka = res[0]
+        //let animka = res[0]
         //let cellM = AnimeCellViewModel(anime: animka)
         //print(cellM)
         

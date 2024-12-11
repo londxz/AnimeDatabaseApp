@@ -45,6 +45,11 @@ class AnimeViewModel {
         self.cellDataSource.value = self.dataSource?.compactMap({ AnimeCellViewModel(anime: $0) })
     }
     
-    
-    //MARK: - SQL Func to get data
+    func injectAnime(with id: Int) -> AnimeModel? {
+        print("injecting anime for id \(String(describing: dataSource?[0].id))")
+        guard let anime = dataSource?.first(where: { $0.id == id}) else {
+            return nil
+        }
+        return anime
+    }
 }

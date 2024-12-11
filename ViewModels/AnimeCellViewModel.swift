@@ -29,21 +29,19 @@ class AnimeCellViewModel {
         
         // Проверка даты
         self.premiereDate = anime.premiere_date.isEmpty ? "Unknown" : anime.premiere_date
-        
-        // Проверка оценки
         self.score = "\(anime.score)/10"
-        
-        // Создание URL
-        if let url = URL(string: anime.image_url), !anime.image_url.isEmpty {
-            self.imageUrl = url
-        } else {
-            self.imageUrl = nil
-            print("Invalid image URL: \(anime.image_url)")
-        }
+        self.imageUrl = makeImageUrl(anime)
     }
 
     private func makeImageUrl(_ anime: AnimeModel) -> URL? {
-        
-        return URL(string: anime.image_url)
+        // Создание URL
+        if let url = URL(string: anime.image_url), !anime.image_url.isEmpty {
+            return url
+        } else {
+            print("Invalid image URL in makeImageUrl AnimeCellViewModel")
+            return nil
+            
+        }
+
     }
 }

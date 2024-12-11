@@ -70,7 +70,21 @@ class DataBaseAnimeController: UIViewController {
                 self.cellDataSource = anime
                 self.reloadTableView()
             }
-
         }
+    }
+    
+    func openDetail(animeId: Int) {
+        print("Opening details for animeId: \(animeId)")
+        guard let anime = animeViewModel.injectAnime(with: animeId) else {
+            print("error in openDetail")
+            return
+        }
+        
+        let detailsViewModel = DetailsAnimeViewModel(anime: anime)
+        let detailsController = DetailsAnimeController(viewModel: detailsViewModel)
+        
+        detailsController.modalPresentationStyle = .fullScreen
+        present(detailsController, animated: true)
+        
     }
 }
