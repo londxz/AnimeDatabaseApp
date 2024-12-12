@@ -46,7 +46,7 @@ class DataBaseAnimeController: UIViewController {
     
     private func setTableView() {
         tableView = build.tableView
-        tableView.backgroundColor = .systemGray5
+        
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([

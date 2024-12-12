@@ -14,7 +14,7 @@ class AnimeCell: UITableViewCell {
     
     var backView: UIView!
     var name: UILabel!
-    var premiereDate: UILabel!
+    var status: UILabel!
     var score: UILabel!
     var image: UIImageView!
     
@@ -77,13 +77,13 @@ class AnimeCell: UITableViewCell {
     
     
     private func setDateLabel() {
-        premiereDate = build.dateLabel
-        backView.addSubview(premiereDate)
+        status = build.dateLabel
+        backView.addSubview(status)
         
         NSLayoutConstraint.activate([
-            premiereDate.topAnchor.constraint(equalTo: name.bottomAnchor,constant: 8),
-            premiereDate.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: 8),
-            premiereDate.trailingAnchor.constraint(equalTo: backView.trailingAnchor, constant: -8)
+            status.topAnchor.constraint(equalTo: name.bottomAnchor,constant: 8),
+            status.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: 8),
+            status.trailingAnchor.constraint(equalTo: backView.trailingAnchor, constant: -8)
         ])
     
     }
@@ -96,7 +96,7 @@ class AnimeCell: UITableViewCell {
             score.bottomAnchor.constraint(equalTo: backView.bottomAnchor, constant: -8),
             score.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: 8),
             score.trailingAnchor.constraint(equalTo: backView.trailingAnchor, constant: -8),
-            score.topAnchor.constraint(equalTo: premiereDate.bottomAnchor, constant: 8)
+            score.topAnchor.constraint(equalTo: status.bottomAnchor, constant: 8)
         ])
     
     }
@@ -117,7 +117,7 @@ class AnimeCell: UITableViewCell {
     
     func setupCell(viewModel: AnimeCellViewModel) {
         self.name.text = viewModel.name
-        self.premiereDate.text = viewModel.premiereDate
+        self.status.text = viewModel.status
         self.score.text = viewModel.score
         self.image.sd_setImage(with: viewModel.imageUrl)
         

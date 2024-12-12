@@ -11,7 +11,7 @@ class AnimeCellViewModel {
     
     var id: Int
     var name: String
-    var premiereDate: String
+    var status: String
     var score: String
     var imageUrl: URL?
     
@@ -28,7 +28,7 @@ class AnimeCellViewModel {
         self.name = anime.name
         
         // Проверка даты
-        self.premiereDate = anime.premiere_date.isEmpty ? "Unknown" : anime.premiere_date
+        self.status = anime.status.isEmpty ? "Unknown," : anime.status + ","
         self.score = "\(anime.score)/10"
         self.imageUrl = makeImageUrl(anime)
     }

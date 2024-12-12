@@ -25,6 +25,14 @@ class LoginScreenController: UIViewController {
     
     override func viewDidLoad() {
         view.backgroundColor = .systemGray5
+        
+        for family: String in UIFont.familyNames {
+            print(family)
+            for names: String in UIFont.fontNames(forFamilyName: family) {
+                print("== \(names)")
+             }
+        }
+
 
         guard let connection = getConnectionToDb() else { return }
         defer { connection.close() }
