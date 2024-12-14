@@ -26,6 +26,9 @@ class DetailsAnimeController: UIViewController, UIScrollViewDelegate {
     var typeLabel = UILabel()
     var animeTypeLabel = UILabel()
     var informationView = UIView()
+    
+    var detailsScrollView = UIScrollView()
+    var detailsViews = [UIView]()
 
     
     
@@ -45,11 +48,13 @@ class DetailsAnimeController: UIViewController, UIScrollViewDelegate {
 
         setGoBackButton()
         //setSynopsisView()
-        setOtherDetails()
+        //setOtherDetails()
+        setHorizontalScrollView()
+
         configView()
         
     }
-    
+
     private func setImage() {
         image = build.image
         image.round()
@@ -99,88 +104,138 @@ class DetailsAnimeController: UIViewController, UIScrollViewDelegate {
     @objc func goBack() {
         dismiss(animated: true)
     }
-    
-    private func setSynopsisView() {
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.showsVerticalScrollIndicator = false
-        scrollView.showsHorizontalScrollIndicator = false
+
+    private func setHorizontalScrollView() {
+        let horizontalScrollView = UIScrollView()
+        horizontalScrollView.translatesAutoresizingMaskIntoConstraints = false
+        horizontalScrollView.showsHorizontalScrollIndicator = false
+        horizontalScrollView.isPagingEnabled = true
+        horizontalScrollView.decelerationRate = .fast
+        view.addSubview(horizontalScrollView)
         
-        scrollView.isScrollEnabled = true
+        let contentView = UIView()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        horizontalScrollView.addSubview(contentView)
+        
+        NSLayoutConstraint.activate([
+            horizontalScrollView.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 20),
+            horizontalScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40), // изменено на 20
+            horizontalScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40), // изменено на -20
+            horizontalScrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -5),
+            
+            contentView.topAnchor.constraint(equalTo: horizontalScrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: horizontalScrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: horizontalScrollView.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: horizontalScrollView.bottomAnchor),
+            contentView.heightAnchor.constraint(equalTo: horizontalScrollView.heightAnchor)
+        ])
+        
+        let synopsisView = UIView()
+        let otherDetailsView = UIView()
+        
+//        to control views
+//        contentView.layer.borderWidth = 1
+//        synopsisView.layer.borderWidth = 1
+//        otherDetailsView.layer.borderWidth = 1
         
         synopsisView.translatesAutoresizingMaskIntoConstraints = false
+        otherDetailsView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(synopsisView)
+        contentView.addSubview(otherDetailsView)
         
-
-        synopsisAnime = build.synopsis
-        synopsisLabel = build.synopsisLabel
-        
-        view.addSubview(synopsisView)
-        synopsisView.addSubview(synopsisLabel)
-        scrollView.addSubview(synopsisAnime)
-        synopsisView.addSubview(scrollView)
-        
+        setSynopsisView(in: synopsisView)
         NSLayoutConstraint.activate([
-            synopsisView.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 20),
-            synopsisView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            synopsisView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
-            synopsisView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -5)
+            synopsisView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            synopsisView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            synopsisView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            synopsisView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -80)
+        ])
+        
+        setOtherDetails(in: otherDetailsView)
+        NSLayoutConstraint.activate([
+            otherDetailsView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            otherDetailsView.leadingAnchor.constraint(equalTo: synopsisView.trailingAnchor),
+            otherDetailsView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            otherDetailsView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -80)
         ])
         
         NSLayoutConstraint.activate([
-            synopsisLabel.topAnchor.constraint(equalTo: synopsisView.topAnchor),
-            synopsisLabel.leadingAnchor.constraint(equalTo: synopsisView.leadingAnchor),
-            synopsisLabel.trailingAnchor.constraint(equalTo: synopsisView.trailingAnchor)
-        ])
-        
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: synopsisLabel.bottomAnchor, constant: 5),
-            scrollView.leadingAnchor.constraint(equalTo: synopsisView.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: synopsisView.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: synopsisView.bottomAnchor)
-        ])
-        
-        NSLayoutConstraint.activate([
-            synopsisAnime.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            synopsisAnime.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            synopsisAnime.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            synopsisAnime.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            synopsisAnime.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
-        
+            otherDetailsView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
     }
     
-    private func setOtherDetails() {
-        informationView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(informationView)
+    private func setSynopsisView(in container: UIView) {
+
+        let verticalScrollView = UIScrollView()
+        verticalScrollView.translatesAutoresizingMaskIntoConstraints = false
+        verticalScrollView.showsVerticalScrollIndicator = false
+        verticalScrollView.isScrollEnabled = true
+        container.addSubview(verticalScrollView)
+        
+        NSLayoutConstraint.activate([
+            verticalScrollView.topAnchor.constraint(equalTo: container.topAnchor),
+            verticalScrollView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            verticalScrollView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            verticalScrollView.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+        ])
+
+        let contentView = UIView()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        verticalScrollView.addSubview(contentView)
+        
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: verticalScrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: verticalScrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: verticalScrollView.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: verticalScrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: verticalScrollView.widthAnchor)
+        ])
+        
+        synopsisAnime = build.synopsis
+        synopsisLabel = build.synopsisLabel
+        
+        contentView.addSubview(synopsisLabel)
+        contentView.addSubview(synopsisAnime)
+        
+        synopsisLabel.translatesAutoresizingMaskIntoConstraints = false
+        synopsisAnime.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            synopsisLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            synopsisLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            synopsisLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            
+            synopsisAnime.topAnchor.constraint(equalTo: synopsisLabel.bottomAnchor, constant: 5),
+            synopsisAnime.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            synopsisAnime.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            synopsisAnime.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+    }
+    
+    private func setOtherDetails(in container: UIView) {
         
         informationLabel = build.informationLabel
         typeLabel = build.typeLabel
         animeTypeLabel = build.animeType
         
-        informationView.addSubview(informationLabel)
-        informationView.addSubview(typeLabel)
-        informationView.addSubview(animeTypeLabel)
+        container.addSubview(informationLabel)
+        container.addSubview(typeLabel)
+        container.addSubview(animeTypeLabel)
+        
+        informationLabel.translatesAutoresizingMaskIntoConstraints = false
+        typeLabel.translatesAutoresizingMaskIntoConstraints = false
+        animeTypeLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            informationView.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 20),
-            informationView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            informationView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
-            informationView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -5)
-        ])
-        
-        NSLayoutConstraint.activate([
-            informationLabel.topAnchor.constraint(equalTo: informationView.topAnchor),
-            informationLabel.centerXAnchor.constraint(equalTo: informationView.centerXAnchor)
-        ])
-        
-        NSLayoutConstraint.activate([
+            informationLabel.topAnchor.constraint(equalTo: container.topAnchor),
+            informationLabel.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            
             typeLabel.topAnchor.constraint(equalTo: informationLabel.bottomAnchor, constant: 20),
-            typeLabel.leadingAnchor.constraint(equalTo: informationView.leadingAnchor)
-        ])
-        
-        NSLayoutConstraint.activate([
+            typeLabel.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            
             animeTypeLabel.leadingAnchor.constraint(equalTo: typeLabel.trailingAnchor, constant: 3),
             animeTypeLabel.topAnchor.constraint(equalTo: informationLabel.bottomAnchor, constant: 20)
         ])
     }
+
 }
