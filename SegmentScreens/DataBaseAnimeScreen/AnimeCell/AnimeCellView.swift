@@ -27,7 +27,7 @@ class AnimeCellView {
         var name = UILabel()
         name.translatesAutoresizingMaskIntoConstraints = false
         //name.font = .monospacedSystemFont(ofSize: 18, weight: .bold)
-        name.font = UIFont(name: "Verdana-Bold", size: 18)
+        name.font = UIFont(name: "Verdana-Bold", size: 22)
         name.textAlignment = .left
         name.numberOfLines = 0
         name.text = "Name"
@@ -38,7 +38,7 @@ class AnimeCellView {
     lazy var dateLabel: UILabel = {
         var date = UILabel()
         date.translatesAutoresizingMaskIntoConstraints = false
-        date.font = .monospacedSystemFont(ofSize: 16, weight: .light)
+        date.font = .monospacedSystemFont(ofSize: 19, weight: .light)
         //date.font = UIFont(name: "Verdana-Italic", size: 15)
         //date.font = UIFont(name: "STIXTwoText-Italic_SemiBold-Italic", size: 19)
         date.text = "06/66/6666"
@@ -50,7 +50,7 @@ class AnimeCellView {
         var rate = UILabel()
         rate.translatesAutoresizingMaskIntoConstraints = false
         //rate.font = .monospacedSystemFont(ofSize: 15, weight: .medium)
-        rate.font = UIFont(name: "Verdana-BoldItalic", size: 15)
+        rate.font = UIFont(name: "Verdana-BoldItalic", size: 19)
         rate.text = "10/10"
         
         return rate

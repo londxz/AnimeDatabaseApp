@@ -12,6 +12,9 @@ class DetailsAnimeView {
     static let shared = DetailsAnimeView()
     private init() {}
     
+    let titleSize: CGFloat = 20.0
+    let textSize: CGFloat = 17.5
+    
     lazy var image: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -21,7 +24,7 @@ class DetailsAnimeView {
     
     lazy var name: UILabel = {
         let lbl = UILabel()
-        lbl.font = UIFont(name: "Verdana-Bold", size: 20)
+        lbl.font = UIFont(name: "Verdana-Bold", size: 24)
         lbl.numberOfLines = 0
         lbl.textAlignment = .justified
         lbl.translatesAutoresizingMaskIntoConstraints = false
@@ -46,7 +49,7 @@ class DetailsAnimeView {
         synop.baselineAdjustment = .alignCenters
         synop.textAlignment = .justified
         synop.numberOfLines = 0
-        synop.font = UIFont(name: "Verdana-Italic", size: 15)
+        synop.font = UIFont(name: "Verdana-Italic", size: textSize)
         synop.translatesAutoresizingMaskIntoConstraints = false
         
        return synop
@@ -55,7 +58,7 @@ class DetailsAnimeView {
     lazy var synopsisLabel: UILabel = {
         let synop = UILabel()
         synop.text = "Synopsis:"
-        synop.font = UIFont(name: "Verdana-Bold", size: 16)
+        synop.font = UIFont(name: "Verdana-Bold", size: titleSize)
         synop.translatesAutoresizingMaskIntoConstraints = false
         
        return synop
@@ -64,7 +67,7 @@ class DetailsAnimeView {
     lazy var informationLabel: UILabel = {
         let lbl = UILabel()
         lbl.text = "Information"
-        lbl.font = UIFont(name: "Verdana-Bold", size: 17)
+        lbl.font = UIFont(name: "Verdana-Bold", size: 22)
         lbl.translatesAutoresizingMaskIntoConstraints = false
         
         return lbl
@@ -72,7 +75,7 @@ class DetailsAnimeView {
     
     lazy var animeType: UILabel = {
         let lbl = UILabel()
-        lbl.font = UIFont(name: "PingFangTC-Medium", size: 15)
+        lbl.font = UIFont(name: "PingFangTC-Medium", size: textSize)
         lbl.translatesAutoresizingMaskIntoConstraints = false
         
         return lbl
@@ -81,9 +84,136 @@ class DetailsAnimeView {
     lazy var typeLabel: UILabel = {
         let lbl = UILabel()
         lbl.text = "Type: "
-        lbl.font = UIFont(name: "Verdana-Bold", size: 16)
+        lbl.font = UIFont(name: "Verdana-Bold", size: titleSize)
         lbl.translatesAutoresizingMaskIntoConstraints = false
         
+        return lbl
+    }()
+    
+    lazy var episodes: UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: "PingFangTC-Medium", size: textSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var episodesLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Episodes: "
+        lbl.font = UIFont(name: "Verdana-Bold", size: titleSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var aired: UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: "PingFangTC-Medium", size: textSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var airedLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Aired: "
+        lbl.font = UIFont(name: "Verdana-Bold", size: titleSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var studio: UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: "PingFangTC-Medium", size: textSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var studioLable: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Studio: "
+        lbl.font = UIFont(name: "Verdana-Bold", size: titleSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var genre: UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: "PingFangTC-Medium", size: textSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var genreLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Genre: "
+        lbl.font = UIFont(name: "Verdana-Bold", size: titleSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var genreQuestionButton: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "questionmark.app"), for: .normal)
+        btn.tintColor = .black
+        //btn.alpha = 0.3
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        
+        return btn
+    }()
+    
+    lazy var studioQuestionButton: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "questionmark.app"), for: .normal)
+        btn.tintColor = .black
+        //btn.alpha = 0.3
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        
+        return btn
+    }()
+    
+    lazy var otherNamesQuestionButton: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "questionmark.app"), for: .normal)
+        btn.tintColor = .black
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        
+        return btn
+    }()
+    
+    lazy var id: UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: "PingFangTC-Medium", size: textSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var idLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Id: "
+        lbl.font = UIFont(name: "Verdana-Bold", size: titleSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var lastChange: UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: "PingFangTC-Medium", size: textSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var lastChangeLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Updated: "
+        lbl.font = UIFont(name: "Verdana-Bold", size: titleSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var otherNamesLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Other names: "
+        lbl.font = UIFont(name: "Verdana-Bold", size: titleSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
         return lbl
     }()
 }

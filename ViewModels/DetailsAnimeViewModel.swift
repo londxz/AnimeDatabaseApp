@@ -19,6 +19,7 @@ class DetailsAnimeViewModel {
     var genre: String
     var type: String
     var updatedAt: String
+    var id: Int
     var image: URL?
     
     init(anime: AnimeModel) {
@@ -28,11 +29,12 @@ class DetailsAnimeViewModel {
         self.synopsis = anime.synopsis
         self.studio = anime.studio
         self.premiereDate = anime.premiere_date
-        self.finalDate = anime.finale_date
+        self.finalDate = anime.finale_date ?? "?"
         self.numEpisodes = anime.num_episodes
         self.genre = anime.genre
         self.type = anime.type
         self.updatedAt = anime.updated_at
+        self.id = anime.id
         self.image = makeImageUrl(anime.image_url)
     }
     

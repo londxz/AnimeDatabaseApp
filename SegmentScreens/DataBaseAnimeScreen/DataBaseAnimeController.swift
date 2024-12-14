@@ -11,11 +11,12 @@ class DataBaseAnimeController: UIViewController {
     
     private let build = DatabaseAnimeView.shared
     
-    //viewModel
+    //viewModels
     var animeViewModel = AnimeViewModel()
-    
     var segmentControl = CustomSegmentControl()
     var tableView = UITableView()
+    
+    
     var cellDataSource: [AnimeCellViewModel] = []
     
     override func viewDidLoad() {
@@ -85,6 +86,5 @@ class DataBaseAnimeController: UIViewController {
         
         detailsController.modalPresentationStyle = .fullScreen
         present(detailsController, animated: true)
-        
     }
 }

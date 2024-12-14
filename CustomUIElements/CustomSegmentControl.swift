@@ -108,7 +108,7 @@ class CustomSegmentControl: UIControl {
             let button = UIButton(type: .system)
             button.setTitle(buttonTitle, for: .normal)
             button.setTitleColor(textColor, for: .normal)
-            button.titleLabel?.font = UIFont(name: "Verdana-SemiBold",size: 16)
+            button.titleLabel?.font = UIFont(name: "Verdana-SemiBold",size: 19)
             button.addTarget(self, action: #selector(buttonTapped(button:)), for: .touchUpInside)
             buttons.append(button)
         }

@@ -36,8 +36,6 @@ class AnimeViewModel {
             } else {
                 print("Failed to fetch data.")
             }
-            
-            
         }
     }
     

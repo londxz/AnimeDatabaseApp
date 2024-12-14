@@ -373,11 +373,11 @@ func searchAnimeByEnglishName(connection: Connection, englishName: String) -> [S
     return nil
 }
 
-func getGenreData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC", searchTerm: String? = nil) -> [String: [Any]]? {
+func getGenreData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC", searchTerm: String? = nil) -> [GenreModel]? {
     
     do {
         
-        var result = [String: [Any]]()
+        var result = [GenreModel]()
         
         let query = """
         SELECT * FROM get_genre_data($1, $2, $3, $4, $5)
@@ -411,9 +411,13 @@ func getGenreData(connection: Connection, numRows: Int, offset: Int = 0, sortCol
             
             if let name = try? columns[0].postgresValue.string(),
                let description = try? columns[1].postgresValue.string() {
-                
-                let genre = GenreModel(name: name, description: description)
-                result["genre", default: []].append(genre)
+                let genre = GenreModel(
+                    name: name,
+                    description: description
+                )
+                result.append(genre)
+            } else {
+            print("getGenreData: Failed to parse row data")
             }
         }
     
@@ -426,11 +430,11 @@ func getGenreData(connection: Connection, numRows: Int, offset: Int = 0, sortCol
     return nil
 }
 
-func getStudioData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC", searchTerm: String? = nil) -> [String: [Any]]? {
+func getStudioData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC", searchTerm: String? = nil) -> [StudioModel]? {
     
     do {
         
-        var result = [String: [Any]]()
+        var result = [StudioModel]()
         
         let query = """
         SELECT * FROM get_studio_data($1, $2, $3, $4, $5)
@@ -464,9 +468,13 @@ func getStudioData(connection: Connection, numRows: Int, offset: Int = 0, sortCo
             
             if let name = try? columns[0].postgresValue.string(),
                let description = try? columns[1].postgresValue.string() {
-                
-                let studio = StudioModel(name: name, description: description)
-                result["studio", default: []].append(studio)
+                let studio = StudioModel(
+                    name: name,
+                    description: description
+                )
+                result.append(studio)
+            } else {
+            print("getStudioData: Failed to parse row data")
             }
         }
         
@@ -482,7 +490,7 @@ func getStudioData(connection: Connection, numRows: Int, offset: Int = 0, sortCo
 func getAnimeData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC") -> [AnimeModel]? {
     
     do {
-        //var result = [String: [Any]]()
+        
         var result = [AnimeModel]()
         
         let query = """
@@ -552,11 +560,11 @@ func getAnimeData(connection: Connection, numRows: Int, offset: Int = 0, sortCol
     return nil
 }
 
-func getAnimeNameLocaleData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "romaji_name", sortDirection: String = "ASC", searchTerm: String? = nil) -> [String: [Any]]? {
+func getAnimeNameLocaleData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "romaji_name", sortDirection: String = "ASC", searchTerm: String? = nil) -> [AnimeNameLocaleModel]? {
     
     do {
         
-        var result = [String: [Any]]()
+        var result = [AnimeNameLocaleModel]()
 
         let query = """
         SELECT * FROM get_anime_name_locale_data($1, $2, $3, $4, $5)
@@ -592,8 +600,14 @@ func getAnimeNameLocaleData(connection: Connection, numRows: Int, offset: Int = 
                let japanName = try? columns[1].postgresValue.string(),
                let romajiName = try? columns[2].postgresValue.string() {
                 
-                let animeNameLocale = AnimeNameLocaleModel(anime_id: animeId, japanese_name: japanName, romaji_name: romajiName)
-                result["anime_name_locale", default: []].append(animeNameLocale)
+                let animeNameLocale = AnimeNameLocaleModel(
+                    anime_id: animeId,
+                    japanese_name: japanName,
+                    romaji_name: romajiName
+                )
+                result.append(animeNameLocale)
+            } else {
+                print("getAnimeData: Failed to parse row data")
             }
         }
         
