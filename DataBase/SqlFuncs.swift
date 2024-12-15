@@ -465,16 +465,38 @@ func getStudioData(connection: Connection, numRows: Int, offset: Int = 0, sortCo
                 print("getStudioData: Unexpected number of columns in result")
                 continue
             }
+              
+//            if let name = try? columns[0].postgresValue.string(),
+//               let description = try? columns[1].postgresValue.string() {
+//                let studio = StudioModel(
+//                    name: name,
+//                    description: description
+//                )
+//                result.append(studio)
+//            } else {
+//            print("getStudioData: Failed to parse row data")
+//            }
             
-            if let name = try? columns[0].postgresValue.string(),
-               let description = try? columns[1].postgresValue.string() {
+            for row in columns {
+                let name: String
+                if let extractedName = try? columns[0].postgresValue.string() {
+                    name = extractedName
+                } else {
+                    name = "some name"
+                }
+
+                let description: String
+                if let extractedDescription = try? columns[1].postgresValue.string() {
+                    description = extractedDescription
+                } else {
+                    description = "some description"
+                }
+
                 let studio = StudioModel(
                     name: name,
                     description: description
                 )
                 result.append(studio)
-            } else {
-            print("getStudioData: Failed to parse row data")
             }
         }
         

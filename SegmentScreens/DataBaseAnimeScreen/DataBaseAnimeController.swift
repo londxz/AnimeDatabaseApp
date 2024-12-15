@@ -35,14 +35,66 @@ class DataBaseAnimeController: UIViewController {
     
     private func setSegmentControl() {
         segmentControl = build.segmentControl
+        segmentControl.commaSeparatedButtonTitles = "all anime,update anime"
         segmentControl.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(segmentControl)
+        
+        segmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
         
         NSLayoutConstraint.activate([
             segmentControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             segmentControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             segmentControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
+    }
+    
+    @objc private func segmentChanged(_ sender: CustomSegmentControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            removeChildViewControllersWithAnimation()
+        case 1:
+            switchToViewControllerWithAnimation(AnimeFuncsScreenController())
+        default:
+            break
+        }
+    }
+
+    private func switchToViewControllerWithAnimation(_ viewController: UIViewController) {
+
+        removeChildViewControllersWithAnimation()
+        
+        addChild(viewController)
+        
+        viewController.view.frame = view.bounds
+        viewController.view.alpha = 0.0
+        view.addSubview(viewController.view)
+        
+        UIView.animate(withDuration: 0.2, animations: {
+            viewController.view.alpha = 1.0
+        }) { _ in
+            viewController.didMove(toParent: self)
+        }
+        
+        viewController.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            viewController.view.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: 5),
+            viewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            viewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            viewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+
+    private func removeChildViewControllersWithAnimation() {
+        for child in children {
+            child.willMove(toParent: nil)
+            
+            UIView.animate(withDuration: 0.2, animations: {
+                child.view.alpha = 0.0
+            }) { _ in
+                child.view.removeFromSuperview()
+                child.removeFromParent()
+            }
+        }
     }
     
     private func setTableView() {
@@ -87,4 +139,5 @@ class DataBaseAnimeController: UIViewController {
         detailsController.modalPresentationStyle = .fullScreen
         present(detailsController, animated: true)
     }
+    
 }
