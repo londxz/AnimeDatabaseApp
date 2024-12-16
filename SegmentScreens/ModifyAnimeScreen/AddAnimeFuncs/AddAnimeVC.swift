@@ -24,11 +24,15 @@ class AddAnimeVC: UIViewController {
     var typeTextField = UITextField()
     var statusTextField = UITextField()
     
+    var imageUrlStack = UIStackView()
+    
     override func viewDidLoad() {
         view.backgroundColor = .detailsWhite
 
-        //setBannerImage()
         setTextViews()
+        
+        setAddAnimeButton()
+        
     }
     
     lazy var addAnimeButton: UIButton = {
@@ -44,9 +48,10 @@ class AddAnimeVC: UIViewController {
         btn.layer.cornerRadius = 12
         return btn
     }()
-
-    lazy var bannerImage: UIImageView = {
+    
+    lazy var successImage: UIImageView = {
         let image = UIImageView()
+        image.image = .successLogin
         image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFill
         
@@ -58,20 +63,21 @@ class AddAnimeVC: UIViewController {
         return image
     }()
     
-    
-    private func setBannerImage() {
-        view.addSubview(bannerImage)
-        bannerImage.image = .welcomeIcon
-        
+    lazy var failImage: UIImageView = {
+        let image = UIImageView()
+        image.image = .failAdd
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.contentMode = .scaleAspectFill
         
         NSLayoutConstraint.activate([
-            bannerImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            bannerImage.topAnchor.constraint(equalTo: view.topAnchor)
+            image.widthAnchor.constraint(equalToConstant: 200),
+            image.heightAnchor.constraint(equalToConstant: 200)
         ])
-    }
+        
+        return image
+    }()
     
-    
-    
+
     private func setTextViews() {
         
         let nameStack = classForGetTextView.getTextView(textField: nameTextField, placeholder: "Anime name")
@@ -84,10 +90,7 @@ class AddAnimeVC: UIViewController {
         let statusStack = classForGetTextView.getTextView(textField: statusTextField, placeholder: "Status")
         let premiereStack = classForGetTextView.getTextView(textField: premiereTextField, placeholder: "Premiere date")
         let finalStack = classForGetTextView.getTextView(textField: finalTextField, placeholder: "Final date")
-        let imageUrlStack = classForGetTextView.getTextView(textField: imageUrlTextField, placeholder: "Image URL")
-        
-        addAnimeButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(addAnimeButton)
+        imageUrlStack = classForGetTextView.getTextView(textField: imageUrlTextField, placeholder: "Image URL")
         
         view.addSubview(nameStack)
         view.addSubview(synopsisStack)
@@ -101,8 +104,6 @@ class AddAnimeVC: UIViewController {
         view.addSubview(finalStack)
         view.addSubview(imageUrlStack)
 
-
-        
         NSLayoutConstraint.activate([
             nameStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
             nameStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -149,6 +150,14 @@ class AddAnimeVC: UIViewController {
             imageUrlStack.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -20),
         ])
         
+    }
+    
+    private func setAddAnimeButton() {
+        addAnimeButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(addAnimeButton)
+        
+        addAnimeButton.addTarget(self, action: #selector(addAnimeToDB), for: .touchUpInside)
+        
         NSLayoutConstraint.activate([
             addAnimeButton.topAnchor.constraint(equalTo: imageUrlStack.bottomAnchor, constant: 10),
             addAnimeButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -157,4 +166,128 @@ class AddAnimeVC: UIViewController {
         ])
     }
     
+    @objc private func addAnimeToDB() {
+        
+        guard let connection = getConnectionToDb() else { return }
+        defer { connection.close() }
+        
+        if let animeName = nameTextField.text, !animeName.isEmpty,
+           let studioName = studioTextField.text, !studioName.isEmpty,
+           let synopsis = synopsisTextField.text, !synopsis.isEmpty,
+           let imageUrl = imageUrlTextField.text, !imageUrl.isEmpty,
+           let premiereDate = premiereTextField.text, !premiereDate.isEmpty,
+           let finalDate = finalTextField.text, !finalDate.isEmpty,
+           let numEpisodes = numEpisodesTextField.text, !numEpisodes.isEmpty,
+           let score = scoreTextField.text, !score.isEmpty,
+           let genre = genreTextField.text, !genre.isEmpty,
+           let type = typeTextField.text, !type.isEmpty,
+           let status = statusTextField.text, !status.isEmpty {
+            
+            if let type = AnimeType(rawValue: type) {
+                if let status = AnimeStatus(rawValue: status) {
+                    if let numEpisodes = Int(numEpisodes) {
+                        if let score = Double(score) {
+                            
+                            let result = addAnime(connection: connection, name: animeName, studio: studioName, synopsis: synopsis, premierDate: premiereDate, genre: genre, type: type, status: status, imageUrl: imageUrl, finalDate: finalDate, numEpisodes: numEpisodes, score: score)
+                            
+                            switch result {
+                            case .success:
+                                print("Added to DB")
+                                showSuccessFailSquare(image: successImage)
+                            case .failure(let error):
+                                print("Not added to DB")
+                                print(error)
+                                showSuccessFailSquare(image: failImage)
+                            }
+                            
+                        } else {
+                            print("Score must be double")
+                            showSuccessFailSquare(image: failImage)
+                        }
+                        
+                    } else {
+                        print("Number of episodes must be int")
+                        showSuccessFailSquare(image: failImage)
+                    }
+                    
+                } else {
+                    print("Invalid anime status")
+                    showSuccessFailSquare(image: failImage)
+                }
+            } else {
+                print("Invalid anime type")
+                showSuccessFailSquare(image: failImage)
+            }
+            
+        } else {
+            print("One of fields is empty")
+            showSuccessFailSquare(image: failImage)
+        }
+    }
+    
+    
+    private func showSuccessFailSquare(image: UIImageView) {
+
+        if view.viewWithTag(999) != nil {
+            return
+        }
+        
+        let overlayView = UIView()
+        overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        overlayView.translatesAutoresizingMaskIntoConstraints = false
+        overlayView.tag = 999
+        overlayView.alpha = 0
+        view.addSubview(overlayView)
+        
+        NSLayoutConstraint.activate([
+            overlayView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            overlayView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            overlayView.topAnchor.constraint(equalTo: view.topAnchor),
+            overlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        
+        let infoSquare = UIView()
+        infoSquare.backgroundColor = .systemGray6
+        infoSquare.layer.cornerRadius = 10
+        infoSquare.translatesAutoresizingMaskIntoConstraints = false
+        infoSquare.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        infoSquare.alpha = 0
+        overlayView.addSubview(infoSquare)
+
+        NSLayoutConstraint.activate([
+            infoSquare.centerXAnchor.constraint(equalTo: overlayView.centerXAnchor),
+            infoSquare.centerYAnchor.constraint(equalTo: overlayView.centerYAnchor),
+            infoSquare.widthAnchor.constraint(equalToConstant: 310),
+            infoSquare.heightAnchor.constraint(equalToConstant: 310)
+        ])
+        
+        infoSquare.addSubview(image)
+        image.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            image.centerXAnchor.constraint(equalTo: overlayView.centerXAnchor),
+            image.centerYAnchor.constraint(equalTo: overlayView.centerYAnchor)
+        ])
+        
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: {
+            overlayView.alpha = 1
+            infoSquare.alpha = 1
+            infoSquare.transform = .identity
+
+        }, completion: { _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                self.hideInfoSquare()
+            }
+        })
+    }
+
+    @objc private func hideInfoSquare() {
+        if let overlayView = view.viewWithTag(999) {
+            UIView.animate(withDuration: 0.3, animations: {
+                overlayView.alpha = 0
+            }) { _ in
+                overlayView.removeFromSuperview()
+            }
+        }
+    }
 }

@@ -29,7 +29,7 @@ class DetailsAnimeViewModel {
         self.synopsis = anime.synopsis
         self.studio = anime.studio
         self.premiereDate = anime.premiere_date
-        self.finalDate = anime.finale_date ?? "?"
+        self.finalDate = anime.finale_date 
         self.numEpisodes = anime.num_episodes
         self.genre = anime.genre
         self.type = anime.type

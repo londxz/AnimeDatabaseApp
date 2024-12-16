@@ -73,4 +73,72 @@ class AnimeFuncsScreenView {
         btn.layer.cornerRadius = 12
         return btn
     }()
+    
+    lazy var deleteByPKButton: UIButton = {
+        let btn = UIButton()
+        
+        btn.backgroundColor = .white
+        btn.setTitleColor(.failPurple, for: .normal)
+        btn.setTitle(":-P", for: .highlighted)
+        btn.titleLabel?.font = UIFont(name: "Verdana-Bold", size: 16)
+        btn.setTitle("Delete table", for: .normal)
+
+        btn.layer.borderWidth = 2
+        btn.layer.borderColor = UIColor.failPurple.cgColor
+        btn.layer.cornerRadius = 12
+
+        return btn
+    }()
+    
+    lazy var deleteCharacterButton: UIButton = {
+        let btn = UIButton()
+        btn.backgroundColor = .failPurple
+        btn.setTitleColor(.white, for: .normal)
+        btn.setTitle(":3", for: .highlighted)
+        btn.titleLabel?.font = UIFont(name: "Verdana-Bold", size: 16)
+        btn.setTitle("Delete character", for: .normal)
+        btn.layer.cornerRadius = 12
+        return btn
+    }()
+    
+    lazy var clearTableButton: UIButton = {
+        let btn = UIButton()
+        btn.backgroundColor = .white
+        btn.setTitleColor(.failPurple, for: .normal)
+        btn.setTitle(":-P", for: .highlighted)
+        btn.titleLabel?.font = UIFont(name: "Verdana-Bold", size: 16)
+        btn.setTitle("Clear table", for: .normal)
+
+        btn.layer.borderWidth = 2
+        btn.layer.borderColor = UIColor.failPurple.cgColor
+        btn.layer.cornerRadius = 12
+        return btn
+    }()
+    
+    lazy var clearAllTablesButton: UIButton = {
+        let btn = UIButton()
+        btn.backgroundColor = .failPurple
+        btn.setTitleColor(.white, for: .normal)
+        btn.setTitle(":3", for: .highlighted)
+        btn.titleLabel?.font = UIFont(name: "Verdana-Bold", size: 16)
+        btn.setTitle("Clear all tables", for: .normal)
+        btn.layer.cornerRadius = 12
+        return btn
+    }()
+    
+    lazy var updateByPKButton: UIButton = {
+        let btn = UIButton()
+        btn.backgroundColor = .white
+        btn.setTitleColor(.failPurple, for: .normal)
+        btn.setTitle(":-P", for: .highlighted)
+        btn.titleLabel?.font = UIFont(name: "Verdana-Bold", size: 16)
+        btn.setTitle("Update table", for: .normal)
+
+        btn.layer.borderWidth = 2
+        btn.layer.borderColor = UIColor.failPurple.cgColor
+        btn.layer.cornerRadius = 12
+        return btn
+    }()
+    
+    
 }

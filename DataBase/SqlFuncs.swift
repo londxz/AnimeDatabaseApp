@@ -105,7 +105,7 @@ func addStudio(connection: Connection, name: String, description: String) {
     }
 }
 
-func addAnime(connection: Connection, name: String, studio: String, synopsis: String, premierDate: String, genre: String, type: AnimeType, status: AnimeStatus, imageUrl: String, finalDate: String, numEpisodes: Int = 0, score: Double = 0.0) {
+func addAnime(connection: Connection, name: String, studio: String, synopsis: String, premierDate: String, genre: String, type: AnimeType, status: AnimeStatus, imageUrl: String, finalDate: String, numEpisodes: Int = 0, score: Double = 0.0) -> Result<Void, Error> {
     
     do {
 
@@ -133,13 +133,15 @@ func addAnime(connection: Connection, name: String, studio: String, synopsis: St
         ])
 
         print("Процедура addAnime успешно вызвана")
-
+        return .success(())
     } catch {
+
         print(error)
+        return .failure(error)
     }
 }
 
-func addAnimeNameLocale(connection: Connection, id: Int, japaneseName: String?, romajiName: String?) {
+func addAnimeNameLocale(connection: Connection, id: Int, japaneseName: String?, romajiName: String?) -> Result<Void, Error> {
     do {
 
         let query = """
@@ -158,13 +160,14 @@ func addAnimeNameLocale(connection: Connection, id: Int, japaneseName: String?, 
         ])
 
         print("Процедура addAnimeNameLocale успешно вызвана")
-
+        return .success(())
     } catch {
         print(error)
+        return .failure(error)
     }
 }
 
-func addCharacter(connection: Connection, name: String, id: Int, description: String?) {
+func addCharacter(connection: Connection, name: String, id: Int, description: String?) -> Result<Void, Error> {
     do {
 
         let query = """
@@ -183,22 +186,23 @@ func addCharacter(connection: Connection, name: String, id: Int, description: St
         ])
 
         print("Процедура addCharacter успешно вызвана")
-
+        return .success(())
     } catch {
         print(error)
+        return .failure(error)
     }
 }
 
 //MARK: - update data
 
 func updateByPrimaryKey(connection: Connection, tableName: String, primaryKeyColumn: String, primaryKeyValue: String, updates: [String: String]
-) {
+) -> Result<Void, Error> {
     do {
         
         let jsonUpdates = try JSONSerialization.data(withJSONObject: updates, options: [])
         guard let jsonUpdatesString = String(data: jsonUpdates, encoding: .utf8) else {
             print("updateByPrimaryKey: Ошибка преобразования обновлений в строку JSON")
-            return
+            return .failure("updateByPrimaryKey: Ошибка преобразования обновлений в строку JSON" as! Error)
         }
 
         let query = """
@@ -218,8 +222,11 @@ func updateByPrimaryKey(connection: Connection, tableName: String, primaryKeyCol
         ])
 
         print("Процедура updateByPrimaryKey успешно вызвана")
+        return .success(())
     } catch {
-        print("Ошибка выполнения процедуры updateByPrimaryKey: \(error)")
+
+        print(error)
+        return .failure(error)
     }
 }
 
@@ -679,14 +686,6 @@ func getCharacterData(connection: Connection, numRows: Int, offset: Int = 0, sor
                 continue
             }
             
-//            if let id = try? columns[0].postgresValue.int(),
-//               let name = try? columns[1].postgresValue.string(),
-//               let animeId = try? columns[2].postgresValue.int(),
-//               let description = try? columns[3].postgresValue.string() {
-//                
-//                let character = CharacterModel(id: id, name: name, anime_id: animeId, description: description)
-//                result["character", default: []].append(character)
-//            }
             if let id = try? columns[0].postgresValue.int(),
                let name = try? columns[1].postgresValue.string(),
                let animeId = try? columns[2].postgresValue.int(),
@@ -710,7 +709,7 @@ func getCharacterData(connection: Connection, numRows: Int, offset: Int = 0, sor
 
 //MARK: - delete data
 
-func clearTable(connection: Connection, name: String) {
+func clearTable(connection: Connection, name: String) -> Result<Void, Error> {
     do {
         let query = "CALL clear_table($1)"
         
@@ -722,12 +721,15 @@ func clearTable(connection: Connection, name: String) {
         ])
         
         print("Процедура clearTable успешно выполнена")
+        return .success(())
     } catch {
-        print("Ошибка выполнения процедуры clearTable: \(error)")
+
+        print(error)
+        return .failure(error)
     }
 }
 
-func clearAllTables(connection: Connection) {
+func clearAllTables(connection: Connection) -> Result<Void, Error> {
     
     do {
         let query = "CALL clear_all_tables()"
@@ -739,12 +741,15 @@ func clearAllTables(connection: Connection) {
         
         print("Процедура clearAllTables успешно вызвана.")
         
+        return .success(())
     } catch {
-        print("Ошибка выполнения процедуры clearAllTables: \(error)")
+
+        print(error)
+        return .failure(error)
     }
 }
 
-func deleteByPk(connection: Connection, name: String, pkColumn: String, pkValue: String) {
+func deleteByPk(connection: Connection, name: String, pkColumn: String, pkValue: String) -> Result<Void, Error> {
     do {
         let query = """
         CALL delete_by_pk(
@@ -761,13 +766,16 @@ func deleteByPk(connection: Connection, name: String, pkColumn: String, pkValue:
             pkValue
         ])
 
-        print("Процедура deleteByPk успешно вызвана.")
+        print("Процедура deleteByPk успешно вызвана")
+        return .success(())
     } catch {
-        print("Ошибка выполнения процедуры deleteByPk: \(error)")
+
+        print(error)
+        return .failure(error)
     }
 }
 
-func deleteCharacterByDescription(connection: Connection, description: String) {
+func deleteCharacterByDescription(connection: Connection, description: String) -> Result<Void, Error> {
     do {
         let query = """
         CALL delete_character_by_description(
@@ -783,8 +791,11 @@ func deleteCharacterByDescription(connection: Connection, description: String) {
         ])
 
         print("Процедура deleteCharacterByDescription успешно вызвана.")
+        return .success(())
     } catch {
-        print("Ошибка выполнения процедуры deleteCharacterByDescription: \(error)")
+
+        print(error)
+        return .failure(error)
     }
 }
 

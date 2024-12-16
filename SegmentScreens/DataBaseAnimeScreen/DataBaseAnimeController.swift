@@ -36,7 +36,7 @@ class DataBaseAnimeController: UIViewController {
     
     private func setSegmentControl() {
         segmentControl = build.segmentControl
-        segmentControl.commaSeparatedButtonTitles = "all anime,update anime"
+        segmentControl.commaSeparatedButtonTitles = "all anime,modify anime"
         segmentControl.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(segmentControl)
         
