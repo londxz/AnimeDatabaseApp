@@ -35,14 +35,17 @@ class DetailsAnimeController: UIViewController {
     var lastChange = UILabel()
     var lastChangeLabel = UILabel()
     var otherNamesLabel = UILabel()
+    var charactersLabel = UILabel()
     
     var genreQuestionButton = UIButton()
     var studioQuestionButton = UIButton()
     var otherNamesQuestionButton = UIButton()
+    var charactersQuestionButton = UIButton()
     
     var studioData = [String: String]()
     var genreData = [String: String]()
     var animeNamesData = [String: (String, String)]()
+    var charactersData = [String: (String, String, String)]()
 
     init(viewModel: DetailsAnimeViewModel) {
         self.viewModel = viewModel
@@ -63,7 +66,9 @@ class DetailsAnimeController: UIViewController {
         setGenreQuestionButton()
         setStudioQuestionButton()
         setOtherNamesQuestionButton()
+        setCharactersQuestionButton()
         configView()
+        
         
     }
 
@@ -243,9 +248,12 @@ class DetailsAnimeController: UIViewController {
         lastChange = build.lastChange
         lastChangeLabel = build.lastChangeLabel
         otherNamesLabel = build.otherNamesLabel
+        charactersLabel = build.charactersLabel
+    
         let episodesLabel = build.episodesLabel
         let studioLabel = build.studioLable
         let genreLabel = build.genreLabel
+        
         
         
         container.addSubview(informationLabel)
@@ -264,6 +272,7 @@ class DetailsAnimeController: UIViewController {
         container.addSubview(lastChange)
         container.addSubview(lastChangeLabel)
         container.addSubview(otherNamesLabel)
+        container.addSubview(charactersLabel)
         
         informationLabel.translatesAutoresizingMaskIntoConstraints = false
         typeLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -331,6 +340,11 @@ class DetailsAnimeController: UIViewController {
             otherNamesLabel.topAnchor.constraint(equalTo: lastChange.bottomAnchor, constant: 10),
             otherNamesLabel.leadingAnchor.constraint(equalTo: container.leadingAnchor)
         ])
+        
+        NSLayoutConstraint.activate([
+            charactersLabel.topAnchor.constraint(equalTo: otherNamesLabel.bottomAnchor, constant: 10),
+            charactersLabel.leadingAnchor.constraint(equalTo: container.leadingAnchor)
+        ])
     }
     
     private func setGenreQuestionButton() {
@@ -363,6 +377,17 @@ class DetailsAnimeController: UIViewController {
         NSLayoutConstraint.activate([
             otherNamesQuestionButton.leadingAnchor.constraint(equalTo: otherNamesLabel.trailingAnchor, constant: 5),
             otherNamesQuestionButton.bottomAnchor.constraint(equalTo: otherNamesLabel.bottomAnchor)
+        ])
+    }
+    
+    private func setCharactersQuestionButton() {
+        charactersQuestionButton = build.charactersQuestionButton
+        charactersQuestionButton.addTarget(self, action: #selector(showCharactersInfoSquare), for: .touchUpInside)
+        view.addSubview(charactersQuestionButton)
+        
+        NSLayoutConstraint.activate([
+            charactersQuestionButton.leadingAnchor.constraint(equalTo: charactersLabel.trailingAnchor, constant: 5),
+            charactersQuestionButton.bottomAnchor.constraint(equalTo: charactersLabel.bottomAnchor)
         ])
     }
     
@@ -564,6 +589,76 @@ class DetailsAnimeController: UIViewController {
             
         }, completion: nil)
     }
+    
+    @objc private func showCharactersInfoSquare() {
+        
+        if view.viewWithTag(999) != nil {
+            return
+        }
+        
+        getDataForCharacters()
+        
+        
+        let overlayView = UIView()
+        overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        overlayView.translatesAutoresizingMaskIntoConstraints = false
+        overlayView.tag = 999
+        overlayView.alpha = 0
+        view.addSubview(overlayView)
+        
+        NSLayoutConstraint.activate([
+            overlayView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            overlayView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            overlayView.topAnchor.constraint(equalTo: view.topAnchor),
+            overlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        
+        let infoSquare = UIView()
+        infoSquare.backgroundColor = .systemGray6
+        infoSquare.layer.cornerRadius = 10
+        infoSquare.translatesAutoresizingMaskIntoConstraints = false
+        infoSquare.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        infoSquare.alpha = 0
+        overlayView.addSubview(infoSquare)
+        
+        NSLayoutConstraint.activate([
+            infoSquare.centerXAnchor.constraint(equalTo: overlayView.centerXAnchor),
+            infoSquare.centerYAnchor.constraint(equalTo: overlayView.centerYAnchor),
+            infoSquare.widthAnchor.constraint(equalToConstant: 310),
+            infoSquare.heightAnchor.constraint(equalToConstant: 310)
+        ])
+        
+        charactersData.forEach { (characterId, moreData) in
+            
+            let (characerName, animeId, characterDescription) = moreData
+            
+            if animeId == id.text {
+                let matchingCharacters = charactersData.values.filter { $0.1 == animeId }
+                setCharactersInfo(square: infoSquare, id: animeId, data: matchingCharacters)
+            }
+        }
+        
+        let closeButton = UIButton(type: .system)
+        closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+        closeButton.setTitleColor(.black, for: .normal)
+        closeButton.tintColor = .black
+        closeButton.alpha = 0.3
+        closeButton.addTarget(self, action: #selector(hideInfoSquare), for: .touchUpInside)
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        infoSquare.addSubview(closeButton)
+        
+        NSLayoutConstraint.activate([
+            closeButton.topAnchor.constraint(equalTo: infoSquare.topAnchor, constant: 10),
+            closeButton.trailingAnchor.constraint(equalTo: infoSquare.trailingAnchor, constant: -10)
+        ])
+        
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: {
+            overlayView.alpha = 1
+            infoSquare.alpha = 1
+            infoSquare.transform = .identity
+            
+        }, completion: nil)
+    }
 
     @objc private func hideInfoSquare() {
         if let overlayView = view.viewWithTag(999) {
@@ -675,6 +770,72 @@ class DetailsAnimeController: UIViewController {
 
     }
     
+    private func setCharactersInfo(square: UIView, id: String, data: [(String, String, String)]) {
+        
+        square.subviews.forEach { $0.removeFromSuperview() }
+
+        let charactersLabel = UILabel()
+        charactersLabel.translatesAutoresizingMaskIntoConstraints = false
+        charactersLabel.font = UIFont(name: "Verdana-Bold", size: 18)
+        charactersLabel.text = "Characters"
+        
+        let charactersInfo = UILabel()
+        charactersInfo.translatesAutoresizingMaskIntoConstraints = false
+        charactersInfo.font = UIFont(name: "PingFangTC-Medium", size: 17)
+        charactersInfo.numberOfLines = 0
+        charactersInfo.textAlignment = .natural
+
+
+        let formattedText = data
+            .map { "Character \($0.0) has description: \($0.2)" }
+            .joined(separator: "\n\n ")
+
+        charactersInfo.text = formattedText
+
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.isScrollEnabled = true
+        
+        let contentView = UIView()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        
+        scrollView.addSubview(contentView)
+        contentView.addSubview(charactersInfo)
+        square.addSubview(charactersLabel)
+        square.addSubview(scrollView)
+        
+        NSLayoutConstraint.activate([
+            charactersLabel.centerXAnchor.constraint(equalTo: square.centerXAnchor),
+            charactersLabel.topAnchor.constraint(equalTo: square.topAnchor, constant: 20),
+        ])
+        
+        NSLayoutConstraint.activate([
+            scrollView.leadingAnchor.constraint(equalTo: square.leadingAnchor, constant: 20),
+            scrollView.trailingAnchor.constraint(equalTo: square.trailingAnchor, constant: -20),
+            scrollView.topAnchor.constraint(equalTo: charactersLabel.bottomAnchor, constant: 10),
+            scrollView.bottomAnchor.constraint(equalTo: square.bottomAnchor, constant: -20),
+        ])
+        
+        NSLayoutConstraint.activate([
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+        ])
+        
+        NSLayoutConstraint.activate([
+            charactersInfo.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            charactersInfo.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            charactersInfo.topAnchor.constraint(equalTo: contentView.topAnchor),
+            charactersInfo.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+    }
+
+    
+    //MARK: - Work with data for squares
+    
     private func getNumerOfStudios() -> Int {
         if let connection = getConnectionToDb(),
            let res = getAllTablesData(connection: connection) {
@@ -753,6 +914,36 @@ class DetailsAnimeController: UIViewController {
             let japan = name.japanese_name
             animeNamesData[String(id)] = (romaji, japan)
          }
-        print(animeNamesData)
+        //print(animeNamesData)
+    }
+    
+    private func getNumerOfCharacters() -> Int {
+        if let connection = getConnectionToDb(),
+           let res = getAllTablesData(connection: connection) {
+            defer { connection.close() }
+            return res["character"]?.count ?? 0
+        }
+        return 0
+    }
+    
+    private func getDataForCharacters() {
+        let numRows = getNumerOfCharacters()
+        
+        guard let connection = getConnectionToDb() else { return }
+        defer { connection.close() }
+
+        guard let characters = getCharacterData(connection: connection, numRows: numRows) else {
+             print("getDataForCharacters: Ошибка получения данных из базы")
+            return
+         }
+
+        let _ : [()] = characters.map { character in
+            let id = character.id
+            let name = character.name
+            let anime_id = character.anime_id
+            let description = character.description
+            charactersData[String(id)] = (name, String(anime_id), description)
+         }
+        print(charactersData)
     }
 }

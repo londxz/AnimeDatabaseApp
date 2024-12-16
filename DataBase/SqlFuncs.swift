@@ -643,11 +643,11 @@ func getAnimeNameLocaleData(connection: Connection, numRows: Int, offset: Int = 
     return nil
 }
 
-func getCharacterData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC", searchTerm: String? = nil) -> [String: [Any]]?{
+func getCharacterData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC", searchTerm: String? = nil) -> [CharacterModel]? {
     
     do {
         
-        var result = [String: [Any]]()
+        var result = [CharacterModel]()
         
         let query = """
         SELECT * FROM get_character_data($1, $2, $3, $4, $5)
@@ -679,13 +679,23 @@ func getCharacterData(connection: Connection, numRows: Int, offset: Int = 0, sor
                 continue
             }
             
+//            if let id = try? columns[0].postgresValue.int(),
+//               let name = try? columns[1].postgresValue.string(),
+//               let animeId = try? columns[2].postgresValue.int(),
+//               let description = try? columns[3].postgresValue.string() {
+//                
+//                let character = CharacterModel(id: id, name: name, anime_id: animeId, description: description)
+//                result["character", default: []].append(character)
+//            }
             if let id = try? columns[0].postgresValue.int(),
                let name = try? columns[1].postgresValue.string(),
                let animeId = try? columns[2].postgresValue.int(),
                let description = try? columns[3].postgresValue.string() {
                 
                 let character = CharacterModel(id: id, name: name, anime_id: animeId, description: description)
-                result["character", default: []].append(character)
+                result.append(character)
+            } else {
+                print("getCharacterData: Failed to parse row data")
             }
         }
         

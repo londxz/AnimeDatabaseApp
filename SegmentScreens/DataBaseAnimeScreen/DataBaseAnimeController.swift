@@ -26,6 +26,7 @@ class DataBaseAnimeController: UIViewController {
         setTableView()
         
         bindViewModel()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {

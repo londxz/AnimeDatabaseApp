@@ -150,6 +150,24 @@ class DetailsAnimeView {
         return lbl
     }()
     
+    lazy var charactersLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Characters: "
+        lbl.font = UIFont(name: "Verdana-Bold", size: titleSize)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    lazy var charactersQuestionButton: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "questionmark.app"), for: .normal)
+        btn.tintColor = .black
+        //btn.alpha = 0.3
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        
+        return btn
+    }()
+    
     lazy var genreQuestionButton: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage(systemName: "questionmark.app"), for: .normal)
