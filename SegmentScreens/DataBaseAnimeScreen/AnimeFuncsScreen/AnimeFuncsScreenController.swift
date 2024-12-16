@@ -72,12 +72,12 @@ class AnimeFuncsScreenController: UIViewController {
     }
     
     @objc private func pressGenre() {
-        showAddGenreScreen(error: "asdasda")
+        showAddGenreScreen()
     }
     
-    private func showAddGenreScreen(error: String) {
+    private func showAddGenreScreen() {
         
-        let nextViewController = FailLoginViewController(text: error)
+        let nextViewController = AddGenreVC()
         nextViewController.modalPresentationStyle = .pageSheet // или .automatic
  
         present(nextViewController, animated: true, completion: nil)
@@ -98,12 +98,12 @@ class AnimeFuncsScreenController: UIViewController {
     }
     
     @objc private func pressStudio() {
-        showAddStudioScreen(error: "You want to add studio!!")
+        showAddStudioScreen()
     }
     
-    private func showAddStudioScreen(error: String) {
+    private func showAddStudioScreen() {
         
-        let nextViewController = FailLoginViewController(text: error)
+        let nextViewController = AddStudioVC()
         nextViewController.modalPresentationStyle = .pageSheet // или .automatic
  
         present(nextViewController, animated: true, completion: nil)
@@ -124,12 +124,12 @@ class AnimeFuncsScreenController: UIViewController {
     }
     
     @objc private func pressAnimeNames() {
-        showAddStudioScreen(error: "You want to add anime names!!")
+        showAddAnimeNamesScreen()
     }
     
-    private func showAddAnimeNamesScreen(error: String) {
+    private func showAddAnimeNamesScreen() {
         
-        let nextViewController = FailLoginViewController(text: error)
+        let nextViewController = AddAnimeNamesVC()
         nextViewController.modalPresentationStyle = .pageSheet // или .automatic
  
         present(nextViewController, animated: true, completion: nil)
@@ -150,14 +150,76 @@ class AnimeFuncsScreenController: UIViewController {
     }
     
     @objc private func pressCharacter() {
-        showAddStudioScreen(error: "You want to add character!!")
+        showAddCharacterScreen()
     }
     
-    private func showAddCharacterScreen(error: String) {
+    private func showAddCharacterScreen() {
         
-        let nextViewController = FailLoginViewController(text: error)
+        let nextViewController = AddCharacterVC()
         nextViewController.modalPresentationStyle = .pageSheet // или .automatic
  
         present(nextViewController, animated: true, completion: nil)
+    }
+    
+    func getTextView(textField: UITextField, placeholder: String, isPassword: Bool = false) -> UIStackView {
+        
+        lazy var placeholderText: UIView = {
+            
+            let text = UILabel()
+            text.translatesAutoresizingMaskIntoConstraints = false
+            text.text = placeholder
+            text.textColor = .black
+            text.font = UIFont(name: "Verdana-Bold", size: 17)
+            
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(text)
+            
+            text.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 19).isActive = true
+            view.heightAnchor.constraint(equalToConstant: 14).isActive = true
+            
+            return view
+        }()
+        
+        lazy var fieldView: UIView = {
+           
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(textField)
+            
+            view.layer.cornerRadius = 15
+            view.backgroundColor = .systemGray5
+
+            textField.translatesAutoresizingMaskIntoConstraints = false
+            textField.isSecureTextEntry = false
+            textField.placeholder = "Enter \(placeholder.lowercased())"
+            
+            textField.autocapitalizationType = .none
+            
+            NSLayoutConstraint.activate([
+                textField.topAnchor.constraint(equalTo: view.topAnchor),
+                textField.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+                textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+                view.heightAnchor.constraint(equalToConstant: 30)
+            ])
+            
+            return view
+        }()
+        
+        lazy var vStack: UIStackView = {
+            
+            let stack = UIStackView()
+            stack.translatesAutoresizingMaskIntoConstraints = false
+            stack.axis = .vertical
+            stack.spacing = 10
+            
+            stack.addArrangedSubview(placeholderText)
+            stack.addArrangedSubview(fieldView)
+            
+            return stack
+        }()
+        
+        return vStack
     }
 }

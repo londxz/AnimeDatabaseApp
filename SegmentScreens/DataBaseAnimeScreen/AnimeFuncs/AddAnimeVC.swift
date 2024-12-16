@@ -10,6 +10,8 @@ import UIKit
 
 class AddAnimeVC: UIViewController {
     
+    let classForGetTextView = AnimeFuncsScreenController()
+    
     var nameTextField = UITextField()
     var studioTextField = UITextField()
     var synopsisTextField = UITextField()
@@ -22,15 +24,11 @@ class AddAnimeVC: UIViewController {
     var typeTextField = UITextField()
     var statusTextField = UITextField()
     
-    var fieldsStack = UIStackView()
-    
     override func viewDidLoad() {
         view.backgroundColor = .detailsWhite
 
         //setBannerImage()
-        setEmailTextView()
-
-
+        setTextViews()
     }
     
     lazy var addAnimeButton: UIButton = {
@@ -39,7 +37,7 @@ class AddAnimeVC: UIViewController {
         btn.setTitleColor(.failPurple, for: .normal)
         btn.setTitle("о_О", for: .highlighted)
         btn.titleLabel?.font = UIFont(name: "Verdana-Bold", size: 16)
-        btn.setTitle("Add genre", for: .normal)
+        btn.setTitle("Add anime", for: .normal)
 
         btn.layer.borderWidth = 2
         btn.layer.borderColor = UIColor.failPurple.cgColor
@@ -74,19 +72,19 @@ class AddAnimeVC: UIViewController {
     
     
     
-    private func setEmailTextView() {
+    private func setTextViews() {
         
-        let nameStack = getTextView(textField: nameTextField, placeholder: "Name")
-        let synopsisStack = getTextView(textField: synopsisTextField, placeholder: "Synopsis")
-        let studioStack = getTextView(textField: studioTextField, placeholder: "Studio")
-        let genreStack = getTextView(textField: genreTextField, placeholder: "Genre")
-        let typeStack = getTextView(textField: typeTextField, placeholder: "Type")
-        let numEpisodesStack = getTextView(textField: numEpisodesTextField, placeholder: "Episodes number")
-        let scoreStack = getTextView(textField: scoreTextField, placeholder: "Score")
-        let statusStack = getTextView(textField: statusTextField, placeholder: "Status")
-        let premiereStack = getTextView(textField: premiereTextField, placeholder: "Premiere date")
-        let finalStack = getTextView(textField: finalTextField, placeholder: "Final date")
-        let imageUrlStack = getTextView(textField: imageUrlTextField, placeholder: "Image URL")
+        let nameStack = classForGetTextView.getTextView(textField: nameTextField, placeholder: "Anime name")
+        let synopsisStack = classForGetTextView.getTextView(textField: synopsisTextField, placeholder: "Synopsis")
+        let studioStack = classForGetTextView.getTextView(textField: studioTextField, placeholder: "Studio")
+        let genreStack = classForGetTextView.getTextView(textField: genreTextField, placeholder: "Genre")
+        let typeStack = classForGetTextView.getTextView(textField: typeTextField, placeholder: "Type")
+        let numEpisodesStack = classForGetTextView.getTextView(textField: numEpisodesTextField, placeholder: "Episodes number")
+        let scoreStack = classForGetTextView.getTextView(textField: scoreTextField, placeholder: "Score")
+        let statusStack = classForGetTextView.getTextView(textField: statusTextField, placeholder: "Status")
+        let premiereStack = classForGetTextView.getTextView(textField: premiereTextField, placeholder: "Premiere date")
+        let finalStack = classForGetTextView.getTextView(textField: finalTextField, placeholder: "Final date")
+        let imageUrlStack = classForGetTextView.getTextView(textField: imageUrlTextField, placeholder: "Image URL")
         
         addAnimeButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(addAnimeButton)
@@ -159,65 +157,4 @@ class AddAnimeVC: UIViewController {
         ])
     }
     
-    func getTextView(textField: UITextField, placeholder: String, isPassword: Bool = false) -> UIStackView {
-        
-        lazy var placeholderText: UIView = {
-            
-            let text = UILabel()
-            text.translatesAutoresizingMaskIntoConstraints = false
-            text.text = placeholder
-            text.textColor = .black
-            text.font = UIFont(name: "Verdana-Bold", size: 17)
-            
-            let view = UIView()
-            view.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(text)
-            
-            text.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 19).isActive = true
-            view.heightAnchor.constraint(equalToConstant: 14).isActive = true
-            
-            return view
-        }()
-        
-        lazy var fieldView: UIView = {
-           
-            let view = UIView()
-            view.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(textField)
-            
-            view.layer.cornerRadius = 15
-            view.backgroundColor = .systemGray5
-
-            textField.translatesAutoresizingMaskIntoConstraints = false
-            textField.isSecureTextEntry = false
-            textField.placeholder = "UserWith10DatabaseScore"
-            
-            textField.autocapitalizationType = .none
-            
-            NSLayoutConstraint.activate([
-                textField.topAnchor.constraint(equalTo: view.topAnchor),
-                textField.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-                textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-                view.heightAnchor.constraint(equalToConstant: 30)
-            ])
-            
-            return view
-        }()
-        
-        lazy var vStack: UIStackView = {
-            
-            let stack = UIStackView()
-            stack.translatesAutoresizingMaskIntoConstraints = false
-            stack.axis = .vertical
-            stack.spacing = 10
-            
-            stack.addArrangedSubview(placeholderText)
-            stack.addArrangedSubview(fieldView)
-            
-            return stack
-        }()
-        
-        return vStack
-    }
 }
