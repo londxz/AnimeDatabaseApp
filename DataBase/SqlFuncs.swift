@@ -305,79 +305,125 @@ func getAllTablesData(connection: Connection) -> [String: [Any]]? {
     return nil
 }
 
-func searchAnimeByEnglishName(connection: Connection, englishName: String) -> [String: [Any]]? {
-    do {
-        
-        var result = [String: [Any]]()
-        
-        let query = """
-        SELECT * FROM search_anime_by_english_name(
-            $1
-        )
-        """
+//func searchAnimeByEnglishName(connection: Connection, englishName: String) -> [String: [Any]]? {
+//    do {
+//        
+//        var result = [String: [Any]]()
+//        
+//        let query = """
+//        SELECT * FROM search_anime_by_english_name(
+//            $1
+//        )
+//        """
+//
+//        let statement = try connection.prepareStatement(text: query)
+//        defer { statement.close() }
+//
+//        let cursor = try statement.execute(parameterValues: [
+//            englishName
+//        ])
+//        
+//        for row in cursor {
+//            let columns = try row.get().columns
+//            let rowData = try columns[0].postgresValue.string()
+//            
+//            if let jsonData = rowData.data(using: .utf8),
+//            let jsonArray = try? JSONSerialization.jsonObject(with: jsonData,options: []) as? [[String: Any]] {
+//                
+//                    for anime in jsonArray {
+//                        if let id = anime["id"] as? Int,
+//                            let name = anime["name"] as? String,
+//                            let studio = anime["studio"] as? String,
+//                            let synopsis = anime["synopsis"] as? String,
+//                            let imageURL = anime["image_url"] as? String,
+//                            let premiereDate = anime["premiere_date"] as? String,
+//                            let finaleDate = anime["finale_date"] as? String,
+//                            let numEpisodes = anime["num_episodes"] as? Int,
+//                            let score = anime["score"] as? Double,
+//                            let genre = anime["genre"] as? String,
+//                            let type = anime["type"] as? String,
+//                            let status = anime["status"] as? String,
+//                            let updatedAt = anime["updated_at"] as? String
+//                        {
+//                            let anime = AnimeModel(
+//                                id: id,
+//                                name: name,
+//                                studio: studio,
+//                                synopsis: synopsis,
+//                                image_url: imageURL,
+//                                premiere_date: premiereDate,
+//                                finale_date: finaleDate,
+//                                num_episodes: numEpisodes,
+//                                score: score,
+//                                genre: genre,
+//                                type: type,
+//                                status: status,
+//                                updated_at: updatedAt
+//                            )
+//                            result["anime", default: []].append(anime)
+//                        } else {
+//                            print("searchAnimeByEnglishName: Missing or invalid fields in anime JSON object")
+//                        }
+//                    }
+//            } else {
+//                print("searchAnimeByEnglishName: Failed to parse JSON array from the result.")
+//            }
+//        }
+//        
+//        print("Процедура searchAnimeByEnglishName успешно вызвана")
+//        return result
+//        
+//    } catch {
+//        print("Ошибка выполнения процедуры searchAnimeByEnglishName: \(error)")
+//    }
+//    
+//    return nil
+//}
 
+func searchAnimeByEnglishName(connection: Connection, englishName: String) -> [AnimeModel]? {
+    guard !englishName.isEmpty else {
+        print("searchAnimeByEnglishName: English name argument is empty.")
+        return nil
+    }
+
+    do {
+        let query = """
+        SELECT * FROM search_anime_by_english_name($1)
+        """
         let statement = try connection.prepareStatement(text: query)
         defer { statement.close() }
 
-        let cursor = try statement.execute(parameterValues: [
-            englishName
-        ])
-        
+        let cursor = try statement.execute(parameterValues: [englishName])
+        var animeList: [AnimeModel] = []
+
         for row in cursor {
             let columns = try row.get().columns
-            let rowData = try columns[0].postgresValue.string()
-            
-            if let jsonData = rowData.data(using: .utf8),
-            let jsonArray = try? JSONSerialization.jsonObject(with: jsonData,options: []) as? [[String: Any]] {
-                
-                    for anime in jsonArray {
-                        if let id = anime["id"] as? Int,
-                            let name = anime["name"] as? String,
-                            let studio = anime["studio"] as? String,
-                            let synopsis = anime["synopsis"] as? String,
-                            let imageURL = anime["image_url"] as? String,
-                            let premiereDate = anime["premiere_date"] as? String,
-                            let finaleDate = anime["finale_date"] as? String,
-                            let numEpisodes = anime["num_episodes"] as? Int,
-                            let score = anime["score"] as? Double,
-                            let genre = anime["genre"] as? String,
-                            let type = anime["type"] as? String,
-                            let status = anime["status"] as? String,
-                            let updatedAt = anime["updated_at"] as? String
-                        {
-                            let anime = AnimeModel(
-                                id: id,
-                                name: name,
-                                studio: studio,
-                                synopsis: synopsis,
-                                image_url: imageURL,
-                                premiere_date: premiereDate,
-                                finale_date: finaleDate,
-                                num_episodes: numEpisodes,
-                                score: score,
-                                genre: genre,
-                                type: type,
-                                status: status,
-                                updated_at: updatedAt
-                            )
-                            result["anime", default: []].append(anime)
-                        } else {
-                            print("searchAnimeByEnglishName: Missing or invalid fields in anime JSON object")
-                        }
-                    }
-            } else {
-                print("searchAnimeByEnglishName: Failed to parse JSON array from the result.")
-            }
+
+            let anime = AnimeModel(
+                id: try columns[0].int(),
+                name: try columns[1].string(),
+                studio: try columns[2].string(),
+                synopsis: try columns[3].string(),
+                image_url: try columns[4].string(),
+                premiere_date: try columns[5].string(),
+                finale_date: try columns[6].string(),
+                num_episodes: try columns[7].int(),
+                score: try columns[8].double(),
+                genre: try columns[9].string(),
+                type: try columns[10].string(),
+                status: try columns[11].string(),
+                updated_at: try columns[12].string()
+            )
+
+            animeList.append(anime)
         }
-        
+
         print("Процедура searchAnimeByEnglishName успешно вызвана")
-        return result
-        
+        return animeList.isEmpty ? nil : animeList
     } catch {
         print("Ошибка выполнения процедуры searchAnimeByEnglishName: \(error)")
+        return nil
     }
-    
-    return nil
 }
 
 func getGenreData(connection: Connection, numRows: Int, offset: Int = 0, sortCol: String = "name", sortDirection: String = "ASC", searchTerm: String? = nil) -> [GenreModel]? {

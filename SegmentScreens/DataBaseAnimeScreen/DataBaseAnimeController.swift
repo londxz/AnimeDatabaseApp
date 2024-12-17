@@ -14,6 +14,7 @@ class DataBaseAnimeController: UIViewController {
     //viewModels
     var animeViewModel = AnimeViewModel()
     var segmentControl = CustomSegmentControl()
+    var searchTextField = UITextField()
     var tableView = UITableView()
     
     
@@ -23,10 +24,16 @@ class DataBaseAnimeController: UIViewController {
         view.backgroundColor = .systemGray5
         
         setSegmentControl()
+        setSearchTextField()
         setTableView()
         
         bindViewModel()
         
+        guard let connection = getConnectionToDb() else { return }
+        defer { connection.close() }
+
+        guard let res = searchAnimeByEnglishName(connection: connection, englishName: "app") else { return }
+        print("RESULT:\n\(res.count)")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -98,13 +105,52 @@ class DataBaseAnimeController: UIViewController {
         }
     }
     
+    private func setSearchTextField() {
+        
+        searchTextField.placeholder = "Search anime..."
+        searchTextField.borderStyle = .roundedRect
+        searchTextField.backgroundColor = .white
+        
+        searchTextField.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(searchTextField)
+        
+        searchTextField.addTarget(self, action: #selector(searchTextChanged), for: .editingChanged)
+        view.addSubview(searchTextField)
+        
+        NSLayoutConstraint.activate([
+            searchTextField.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: 10),
+            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+        ])
+    }
+    
+    @objc private func searchTextChanged(_ sender: UITextField) {
+        guard let searchText = sender.text, !searchText.isEmpty else {
+            // Если поле поиска пустое, можно вернуть все аниме
+            animeViewModel.getData()
+            return
+        }
+        
+        guard let connection = getConnectionToDb() else { return }
+        defer { connection.close() }
+
+        if let result = searchAnimeByEnglishName(connection: connection, englishName: searchText) {
+            cellDataSource = result.map { AnimeCellViewModel(anime: $0) }
+            reloadTableView()
+        } else {
+            print("No results found for: \(searchText)")
+            cellDataSource = []
+            reloadTableView()
+        }
+    }
+    
     private func setTableView() {
         tableView = build.tableView
         
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: 5),
+            tableView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)

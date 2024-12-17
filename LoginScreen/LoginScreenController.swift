@@ -37,7 +37,7 @@ class LoginScreenController: UIViewController {
         guard let connection = getConnectionToDb() else { return }
         defer { connection.close() }
 
-        guard let res = getGenreData(connection: connection, numRows: 100) else { return }
+        guard let res = searchAnimeByEnglishName(connection: connection, englishName: "app") else { return }
         print("RESULT:\n\(res)")
         //let animka = res[0]
         //let cellM = AnimeCellViewModel(anime: animka)
